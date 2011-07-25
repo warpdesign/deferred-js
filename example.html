@@ -12,8 +12,6 @@
 	}	
 	</style>
 
-	<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
-
 	<script type="text/javascript" src="js/deferred.js"></script>
 	
 	<script type="text/javascript">
@@ -40,11 +38,12 @@
 			}
 		);
 
+		// another example
 		function showDiv(){
 			var dfd = new Deferred();
 		 
 			dfd.done(function(){
-				$('#foo').fadeIn();
+				document.getElementById('foo').style.display = 'block';
 			});
 
 			setTimeout(function() { dfd.resolve() }, 2000);
