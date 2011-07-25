@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+
+	<style type="text/css">
+		#foo{
+			width:100px;
+			height:50px;
+			background-color:blue;
+			display:none;
+	}	
+	</style>
+
+	<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+
+	<script type="text/javascript" src="js/deferred.js"></script>
+	
+	<script type="text/javascript">
+		// Original example from jQuery API documentation: http://api.jquery.com/deferred.promise/
+		// Create a Deferred and return its Promise
+		function asyncEvent(){
+			var dfd = new Deferred();
+			setTimeout(function(){
+				dfd.resolve("hurray");
+			}, Math.floor(Math.random()*1500));
+			setTimeout(function(){
+				dfd.reject("sorry");
+			}, Math.floor(Math.random()*1500));
+			return dfd.promise();
+		}
+
+		// Attach a done and fail handler for the asyncEvent
+		asyncEvent().then(
+			function(status){
+				console.log( status+', things are going well' );
+			},
+			function(status){
+				console.log( status+', you fail this time' );
+			}
+		);
+
+		function showDiv(){
+			var dfd = new Deferred();
+		 
+			dfd.done(function(){
+				$('#foo').fadeIn();
+			});
+
+			setTimeout(function() { dfd.resolve() }, 2000);
+
+			return dfd.promise();
+		}
+
+		 showDiv();
+	</script>
+</head>
+<body>
+	<div id="foo">
+	</div>
+</body>
+</html>
