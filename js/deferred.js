@@ -1,13 +1,11 @@
-(function(global){
-	function bind(fn, that)
-	{
+(function(global) {
+	function bind(fn, that) {
 		return function() {
 			return fn.apply(that, arguments);
 		};
 	}
 
-	function D(func)
-	{
+	function D(func) {
 		this.doneFuncs = [];
 		this.failFuncs = [];
 		this.resultArgs = null;
@@ -18,43 +16,37 @@
 			func.apply(this, [this]);
 	}
 
-	D.prototype.isResolved = function()
-	{
+	D.prototype.isResolved = function() {
 		return this.status === 'rs';
 	}
 
-	D.prototype.isRejected = function()
-	{
+	D.prototype.isRejected = function() {
 		return this.status === 'rj';
 	}
 
-	D.prototype.promise = function()
-	{
+	D.prototype.promise = function() {
 		var self = this,
 		obj = (arguments.length < 1) ? {} : arguments[0];
 
-		obj.then = self.then.bind(self);
-		obj.done = self.done.bind(self);
-		obj.fail = self.fail.bind(self);
-		obj.always = self.always.bind(self);
-		obj.isResolved = self.isResolved.bind(self);
-		obj.isRejected = self.isRejected.bind(self);
+		obj.then = bind(self.then, self);
+		obj.done = bind(self.done, self);
+		obj.fail = bind(self.fail, self);
+		obj.always = bind(self.always, self);
+		obj.isResolved = bind(self.isResolved, self);
+		obj.isRejected = bind(self.isRejected, self);
 
 		return obj;
 	}
 
-	D.prototype.reject = function()
-	{
+	D.prototype.reject = function() {
 		return this.rejectWith(this, arguments);
-	}
+	}	
 
-	D.prototype.resolve = function()
-	{
+	D.prototype.resolve = function() {
 		return this.resolveWith(this, arguments);
 	}
 
-	D.prototype.exec = function(context, dst, args, st)
-	{
+	D.prototype.exec = function(context, dst, args, st) {
 		if (this.status !== '')
 			return this;
 
@@ -66,23 +58,19 @@
 		return this;
 	}
 
-	D.prototype.resolveWith = function(context)
-	{
+	D.prototype.resolveWith = function(context) {
 		var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
 		return this.exec(context, this.doneFuncs, args, 'rs');
 	}
 
-	D.prototype.rejectWith = function(context)
-	{
+	D.prototype.rejectWith = function(context) {
 		var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
 		return this.exec(context, this.failFuncs, args, 'rj');
 	}
 
-	D.prototype.done = function()
-	{
-		var context = this;
+	D.prototype.done = function() {
 		for (var i = 0; i < arguments.length; i++) {
 			// skip any undefined or null arguments
 			if (!arguments[i])
@@ -93,16 +81,15 @@
 				for (var j = 0; j < arr.length; j++) {
 					// immediately call the function if the deferred has been resolved
 					if (this.status === 'rs')
-						arr[j].apply(context, this.resultArgs);
+						arr[j].apply(this, this.resultArgs);
 
 					this.doneFuncs.push(arr[j]);
 				}
 			}
-			else
-			{
+			else {
 				// immediately call the function if the deferred has been resolved
 				if (this.status === 'rs')
-					arguments[i].apply(context, this.resultArgs);
+					arguments[i].apply(this, this.resultArgs);
 
 				this.doneFuncs.push(arguments[i]);
 			}
@@ -111,9 +98,7 @@
 		return this;
 	}
 
-	D.prototype.fail = function(func)
-	{
-		var context = this;
+	D.prototype.fail = function(func) {
 		for (var i = 0; i < arguments.length; i++) {
 			// skip any undefined or null arguments
 			if (!arguments[i])
@@ -124,16 +109,15 @@
 				for (var j = 0; j < arr.length; j++) {
 					// immediately call the function if the deferred has been resolved
 					if (this.status === 'rj')
-						arr[j].apply(context, this.resultArgs);
+						arr[j].apply(this, this.resultArgs);
 
 					this.failFuncs.push(arr[j]);
 				}
 			}
-			else
-			{
+			else {
 				// immediately call the function if the deferred has been resolved
 				if (this.status === 'rj')
-					arguments[i].apply(context, this.resultArgs);
+					arguments[i].apply(this, this.resultArgs);
 
 				this.failFuncs.push(arguments[i]);
 			}
@@ -142,18 +126,15 @@
 		return this;
 	}
 
-	D.prototype.always = function()
-	{
-		if (arguments.length > 0 && arguments[0])
-		{
+	D.prototype.always = function() {
+		if (arguments.length > 0 && arguments[0]) {
 			this.done(arguments[0]);
 			this.fail(arguments[0]);
 		}
 		return this;
 	}
 
-	D.prototype.then = function()
-	{
+	D.prototype.then = function() {
 		// fail function(s)
 		if (arguments.length > 1 && arguments[1])
 			this.fail(arguments[1]);
