@@ -1,13 +1,14 @@
 (function(global) {
-	function bind(fn, that) {
+	function bind(fn, that, ret) {
 		return function() {
-			return fn.apply(that, arguments);
+			fn.apply(that, arguments);
+			return ret;
 		};
 	}
 
 	function D(func) {
 		// invoked without new
-		if (this === window)
+		if (this === global)
 			return new D();
 
 		this.doneFuncs = [];
@@ -20,6 +21,38 @@
 			func.apply(this, [this]);
 	}
 
+	function P(d) {
+		this.then = bind(d.then, d, this);
+		this.done = bind(d.done, d, this);
+		this.fail = bind(d.fail, d, this);
+		this.always = bind(d.always, d, this);
+		this.isResolved = bind(d.isResolved, d, this);
+		this.isRejected = bind(d.isRejected, d, this);
+	}
+
+	D.when = function() {
+		if (arguments.length == 1 && arguments[0].constructor === D)
+			return arguments[0].promise();
+		else if (arguments.length > 1)
+		{
+			return (function(args){
+				var df = new D(),
+					size = args.length,
+					done = 0,
+					rp = new Array(size);	// resolve params: params of each resolve, we need to track down them to be able to pass them in the correct order if the master needs to be resolved
+
+				for (var i = 0; i < args.length; i++) {
+					(function(j) {
+						args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); console.log(rp); }})
+						.fail(function() { df.reject(arguments); });
+					})(i);
+				}
+
+				return df.promise();
+			})(arguments);
+		}
+	}
+
 	D.prototype.isResolved = function() {
 		return this.status === 'rs';
 	}
@@ -30,14 +63,9 @@
 
 	D.prototype.promise = function() {
 		var self = this,
-		obj = (arguments.length < 1) ? {} : arguments[0];
+		obj = (arguments.length < 1) ? new P(this) : arguments[0];
 
-		obj.then = bind(self.then, self);
-		obj.done = bind(self.done, self);
-		obj.fail = bind(self.fail, self);
-		obj.always = bind(self.always, self);
-		obj.isResolved = bind(self.isResolved, self);
-		obj.isRejected = bind(self.isRejected, self);
+		// TODO: implement use case with object passed in parameter
 
 		return obj;
 	}
