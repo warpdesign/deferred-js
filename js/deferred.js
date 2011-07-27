@@ -17,7 +17,7 @@
 
 		// check for option function: call it with this as context and as first parameter, as specified in jQuery api
 		if (func)
-			func.apply(self, [self]);
+			func.apply(this, [this]);
 	}
 
 	D.prototype.isResolved = function() {
