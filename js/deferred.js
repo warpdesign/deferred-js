@@ -31,8 +31,8 @@
 	}
 
 	D.when = function() {
-		if (arguments.length == 1 && arguments[0].constructor === D)
-			return arguments[0].promise();
+		if (arguments.length == 1)
+			return  (arguments[0].constructor === D) ? arguments[0].promise() : arguments[0];
 		else if (arguments.length > 1)
 		{
 			return (function(args){
@@ -43,7 +43,7 @@
 
 				for (var i = 0; i < args.length; i++) {
 					(function(j) {
-						args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); console.log(rp); }})
+						args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); /* console.log(rp); */ }})
 						.fail(function() { df.reject(arguments); });
 					})(i);
 				}

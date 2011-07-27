@@ -29,7 +29,7 @@
 		}
 
 		// Attach a done and fail handler for the asyncEvent
-		asyncEvent().then(
+		Deferred.when(asyncEvent()).then(
 			function(status){
 				console.log( status+', things are going well' );
 			},
