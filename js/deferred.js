@@ -30,9 +30,11 @@
 		this.isRejected = bind(d.isRejected, d, this);
 	}
 
+	P.prototype.promise = function() { return this; }
+
 	D.when = function() {
 		if (arguments.length == 1)
-			return  (arguments[0].constructor === D) ? arguments[0].promise() : arguments[0];
+			return arguments[0].promise();
 		else if (arguments.length > 1)
 		{
 			return (function(args){
