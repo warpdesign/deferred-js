@@ -6,6 +6,10 @@
 	}
 
 	function D(func) {
+		// invoked without new
+		if (this === window)
+			return new D();
+
 		this.doneFuncs = [];
 		this.failFuncs = [];
 		this.resultArgs = null;
@@ -13,7 +17,7 @@
 
 		// check for option function: call it with this as context and as first parameter, as specified in jQuery api
 		if (func)
-			func.apply(this, [this]);
+			func.apply(self, [self]);
 	}
 
 	D.prototype.isResolved = function() {
@@ -127,10 +131,9 @@
 	}
 
 	D.prototype.always = function() {
-		if (arguments.length > 0 && arguments[0]) {
-			this.done(arguments[0]);
-			this.fail(arguments[0]);
-		}
+		if (arguments.length > 0 && arguments[0])
+			this.done(arguments[0]).fail(arguments[0]);
+
 		return this;
 	}
 
