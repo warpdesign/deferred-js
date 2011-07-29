@@ -86,7 +86,6 @@
 						return new P(this);
 
 					var obj = arguments[0];
-					console.log('object detected');
 				break;
 
 				default:	// jQuery seems to return the passed parameter in this special case
