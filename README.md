@@ -1,9 +1,32 @@
 Standalone-Deferred
-==================
+===================
 
-deferred.js is a standalone implementation of deferreds aims to be fully compatible with $.Deferred found in jQuery 1.5+.
+deferred.js is a standalone implementation of deferreds aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
 
-This version has been tested with only a few examples: it may contains bugs and incompatibilites.
+
+What's implemented ?
+--------------------
+
+* Deferred()/new Deferred()
+
+* Deferred.when
+* Deferred.always
+* Deferred.then
+* Deferred.promise
+* Deferred.isResolved
+* Deferred.isRejected
+* Deferred.resolve
+* Deferred.resolveWith
+* Deferred.reject
+* Deferred.rejectWith
+* Deferred.done
+* Deferred.fail
+
+
+What's Missing ?
+----------------
+
+* Deferred.pipe
 
 
 Usage
@@ -12,8 +35,6 @@ Usage
 First include the deferred.js file on your page
 
 	<script type="text/javascript" src="path/to/deferred.js"></script>
-
-Unlike jQuery.Deferred, deferred must be called with the new keyword (this will be fixed in the future):
 
 	// Create a Deferred and return its Promise
 	function asyncEvent(){
@@ -36,13 +57,6 @@ Unlike jQuery.Deferred, deferred must be called with the new keyword (this will 
 			console.log( status+', you fail this time' );
 		}
 	);
-
-
-What's Missing ?
-----------------
-
-Standalone-Deferred currently doesn't implement the pipe method found inside jQuery Deferreds.
-
 
 Contact
 -------

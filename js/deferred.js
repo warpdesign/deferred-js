@@ -1,8 +1,13 @@
 (function(global) {
 	function bind(fn, that, ret) {
 		return function() {
-			fn.apply(that, arguments);
-			return ret;
+			if (ret)
+			{
+				fn.apply(that, arguments);
+				return ret;
+			}
+			else
+				return fn.apply(that, arguments);
 		};
 	}
 
@@ -28,17 +33,22 @@
 		this.always = bind(d.always, d, this);
 		this.isResolved = bind(d.isResolved, d, this);
 		this.isRejected = bind(d.isRejected, d, this);
+		this.promise = bind(d.promise, d);
 	}
 
-	P.prototype.promise = function() { return this; }
-
 	D.when = function() {
-		if (arguments.length == 1)
-			return arguments[0].promise();
-		else if (arguments.length > 1)
-		{
+		if (arguments.length < 2) {
+			var obj = arguments.length ? arguments[0] : undefined;
+			if (obj && (typeof obj.isResolved === 'function' && typeof obj.isRejected === 'function')) {
+				return obj.promise();			
+			}
+			else {
+				return D().resolve(obj).promise();
+			}
+		}
+		else {
 			return (function(args){
-				var df = new D(),
+				var df = D(),
 					size = args.length,
 					done = 0,
 					rp = new Array(size);	// resolve params: params of each resolve, we need to track down them to be able to pass them in the correct order if the master needs to be resolved
@@ -63,13 +73,45 @@
 		return this.status === 'rj';
 	}
 
+	// TODO: clean up
 	D.prototype.promise = function() {
-		var self = this,
-		obj = (arguments.length < 1) ? new P(this) : arguments[0];
+		if (arguments.length) {
+			switch(typeof arguments[0]) {
+				case 'undefined':
+					return new P(this);
+				break;
 
-		// TODO: implement use case with object passed in parameter
+				case 'object':
+					if (arguments[0] === null)
+						return new P(this);
 
-		return obj;
+					var obj = arguments[0];
+					console.log('object detected');
+				break;
+
+				default:	// jQuery seems to return the passed parameter in this special case
+					return arguments[0];
+				break;
+			}
+		}
+		else {
+			var obj = new P(this);
+			return obj;
+		}
+
+		if (obj.isResolved === undefined && obj.isRejected === undefined) {		
+			obj.promise = bind(this.promise, this);
+			obj.then = bind(this.then, this, obj);
+			obj.done = bind(this.done, this, obj);
+			obj.fail = bind(this.fail, this, obj);
+			obj.always = bind(this.always, this, obj);
+			obj.isResolved = bind(this.isResolved, this, obj);
+			obj.isRejected = bind(this.isRejected, this, obj);
+
+			return obj;
+		}
+		else
+			return obj.promise();
 	}
 
 	D.prototype.reject = function() {
