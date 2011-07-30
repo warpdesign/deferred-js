@@ -26,16 +26,6 @@
 			func.apply(this, [this]);
 	}
 
-	function P(d) {
-		this.then = bind(d.then, d, this);
-		this.done = bind(d.done, d, this);
-		this.fail = bind(d.fail, d, this);
-		this.always = bind(d.always, d, this);
-		this.isResolved = bind(d.isResolved, d, this);
-		this.isRejected = bind(d.isRejected, d, this);
-		this.promise = bind(d.promise, d);
-	}
-
 	D.when = function() {
 		if (arguments.length < 2) {
 			var obj = arguments.length ? arguments[0] : undefined;
@@ -78,14 +68,14 @@
 		if (arguments.length) {
 			switch(typeof arguments[0]) {
 				case 'undefined':
-					return new P(this);
+					var obj = {};
 				break;
 
 				case 'object':
 					if (arguments[0] === null)
-						return new P(this);
-
-					var obj = arguments[0];
+						var obj = {};
+					else
+						var obj = arguments[0];
 				break;
 
 				default:	// jQuery seems to return the passed parameter in this special case
@@ -93,10 +83,8 @@
 				break;
 			}
 		}
-		else {
-			var obj = new P(this);
-			return obj;
-		}
+		else
+			var obj = {};
 
 		if (obj.isResolved === undefined && obj.isRejected === undefined) {		
 			obj.promise = bind(this.promise, this);
