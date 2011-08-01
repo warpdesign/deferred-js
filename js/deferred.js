@@ -1,8 +1,7 @@
 (function(global) {
 	function bind(fn, that, ret) {
 		return function() {
-			if (ret)
-			{
+			if (ret) {
 				fn.apply(that, arguments);
 				return ret;
 			}
@@ -12,8 +11,7 @@
 	}
 
 	function D(func) {
-		// invoked without new
-		if (this === global)
+		if (!(this instanceof D))
 			return new D();
 
 		this.doneFuncs = [];
