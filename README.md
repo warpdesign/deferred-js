@@ -26,7 +26,11 @@ What's implemented ?
 What's Missing ?
 ----------------
 
+* Deferred.notify
+* Deferred.notifyWith
 * Deferred.pipe
+* Deferred.progress
+* Deferred.state
 
 
 Usage
