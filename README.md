@@ -8,7 +8,6 @@ What's implemented ?
 --------------------
 
 * Deferred()/new Deferred()
-
 * Deferred.when
 * Deferred.always
 * Deferred.then
@@ -35,10 +34,6 @@ What's Missing ?
 
 Usage
 -----
-
-First include the deferred.js file on your page
-
-	<script type="text/javascript" src="path/to/deferred.js"></script>
 
 	// Create a Deferred and return its Promise
 	function asyncEvent(){
