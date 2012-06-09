@@ -20,6 +20,7 @@ What's implemented ?
 * Deferred.rejectWith
 * Deferred.done
 * Deferred.fail
+* Deferred.state
 
 
 What's Missing ?
@@ -29,7 +30,6 @@ What's Missing ?
 * Deferred.notifyWith
 * Deferred.pipe
 * Deferred.progress
-* Deferred.state
 
 
 Usage

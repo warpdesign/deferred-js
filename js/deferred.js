@@ -17,7 +17,7 @@
 		this.doneFuncs = [];
 		this.failFuncs = [];
 		this.resultArgs = null;
-		this.status = '';
+		this.status = 'pending';
 
 		// check for option function: call it with this as context and as first parameter, as specified in jQuery api
 		if (func)
@@ -53,158 +53,165 @@
 		}
 	}
 
-	D.prototype.isResolved = function() {
-		return this.status === 'rs';
-	}
+	D.prototype = {
+		isResolved:  function() {
+			return this.status === 'resolved';
+		},
 
-	D.prototype.isRejected = function() {
-		return this.status === 'rj';
-	}
+		isRejected: function() {
+			return this.status === 'rejected';
+		},
 
-	// TODO: clean up
-	D.prototype.promise = function() {
-		if (arguments.length) {
-			switch(typeof arguments[0]) {
-				case 'undefined':
-					var obj = {};
-				break;
-
-				case 'object':
-					if (arguments[0] === null)
+		// TODO: clean up
+		promise: function() {
+			if (arguments.length) {
+				switch(typeof arguments[0]) {
+					case 'undefined':
 						var obj = {};
-					else
-						var obj = arguments[0];
-				break;
+					break;
 
-				default:	// jQuery seems to return the passed parameter in this special case
-					return arguments[0];
-				break;
+					case 'object':
+						if (arguments[0] === null)
+							var obj = {};
+						else
+							var obj = arguments[0];
+					break;
+
+					default:	// jQuery seems to return the passed parameter in this special case
+						return arguments[0];
+					break;
+				}
 			}
-		}
-		else
-			var obj = {};
+			else
+				var obj = {};
 
-		if (obj.isResolved === undefined && obj.isRejected === undefined) {		
-			obj.promise = bind(this.promise, this);
-			obj.then = bind(this.then, this, obj);
-			obj.done = bind(this.done, this, obj);
-			obj.fail = bind(this.fail, this, obj);
-			obj.always = bind(this.always, this, obj);
-			obj.isResolved = bind(this.isResolved, this, obj);
-			obj.isRejected = bind(this.isRejected, this, obj);
+			if (obj.isResolved === undefined && obj.isRejected === undefined) {		
+				obj.promise = bind(this.promise, this);
+				obj.then = bind(this.then, this, obj);
+				obj.done = bind(this.done, this, obj);
+				obj.fail = bind(this.fail, this, obj);
+				obj.state = bind(this.state, this, obj);
+				obj.always = bind(this.always, this, obj);
+				obj.isResolved = bind(this.isResolved, this, obj);
+				obj.isRejected = bind(this.isRejected, this, obj);
 
-			return obj;
-		}
-		else
-			return obj.promise();
-	}
+				return obj;
+			}
+			else
+				return obj.promise();
+		},
 
-	D.prototype.reject = function() {
-		return this.rejectWith(this, arguments);
-	}	
+		reject: function() {
+			return this.rejectWith(this, arguments);
+		},
 
-	D.prototype.resolve = function() {
-		return this.resolveWith(this, arguments);
-	}
+		resolve: function() {
+			return this.resolveWith(this, arguments);
+		},
 
-	D.prototype.exec = function(context, dst, args, st) {
-		if (this.status !== '')
+		exec: function(context, dst, args, st) {
+			if (this.status !== 'pending')
+				return this;
+
+			this.status = st;
+
+			for (var i = 0; i < dst.length; i++)
+				dst[i].apply(context, args);
+
 			return this;
+		},
 
-		this.status = st;
+		resolveWith: function(context) {
+			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
-		for (var i = 0; i < dst.length; i++)
-			dst[i].apply(context, args);
+			return this.exec(context, this.doneFuncs, args, 'resolved');
+		},
 
-		return this;
-	}
+		rejectWith: function(context) {
+			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
-	D.prototype.resolveWith = function(context) {
-		var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
+			return this.exec(context, this.failFuncs, args, 'rejected');
+		},
 
-		return this.exec(context, this.doneFuncs, args, 'rs');
-	}
+		done: function() {
+			for (var i = 0; i < arguments.length; i++) {
+				// skip any undefined or null arguments
+				if (!arguments[i])
+					continue;
 
-	D.prototype.rejectWith = function(context) {
-		var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
+				if (arguments[i].constructor === Array ) {
+					var arr = arguments[i];
+					for (var j = 0; j < arr.length; j++) {
+						// immediately call the function if the deferred has been resolved
+						if (this.status === 'resolved')
+							arr[j].apply(this, this.resultArgs);
 
-		return this.exec(context, this.failFuncs, args, 'rj');
-	}
-
-	D.prototype.done = function() {
-		for (var i = 0; i < arguments.length; i++) {
-			// skip any undefined or null arguments
-			if (!arguments[i])
-				continue;
-
-			if (arguments[i].constructor === Array ) {
-				var arr = arguments[i];
-				for (var j = 0; j < arr.length; j++) {
+						this.doneFuncs.push(arr[j]);
+					}
+				}
+				else {
 					// immediately call the function if the deferred has been resolved
-					if (this.status === 'rs')
-						arr[j].apply(this, this.resultArgs);
+					if (this.status === 'resolved')
+						arguments[i].apply(this, this.resultArgs);
 
-					this.doneFuncs.push(arr[j]);
+					this.doneFuncs.push(arguments[i]);
 				}
 			}
-			else {
-				// immediately call the function if the deferred has been resolved
-				if (this.status === 'rs')
-					arguments[i].apply(this, this.resultArgs);
+			
+			return this;
+		},
 
-				this.doneFuncs.push(arguments[i]);
-			}
-		}
-		
-		return this;
-	}
+		fail: function(func) {
+			for (var i = 0; i < arguments.length; i++) {
+				// skip any undefined or null arguments
+				if (!arguments[i])
+					continue;
 
-	D.prototype.fail = function(func) {
-		for (var i = 0; i < arguments.length; i++) {
-			// skip any undefined or null arguments
-			if (!arguments[i])
-				continue;
+				if (arguments[i].constructor === Array ) {
+					var arr = arguments[i];
+					for (var j = 0; j < arr.length; j++) {
+						// immediately call the function if the deferred has been resolved
+						if (this.status === 'rejected')
+							arr[j].apply(this, this.resultArgs);
 
-			if (arguments[i].constructor === Array ) {
-				var arr = arguments[i];
-				for (var j = 0; j < arr.length; j++) {
+						this.failFuncs.push(arr[j]);
+					}
+				}
+				else {
 					// immediately call the function if the deferred has been resolved
-					if (this.status === 'rj')
-						arr[j].apply(this, this.resultArgs);
+					if (this.status === 'rejected')
+						arguments[i].apply(this, this.resultArgs);
 
-					this.failFuncs.push(arr[j]);
+					this.failFuncs.push(arguments[i]);
 				}
 			}
-			else {
-				// immediately call the function if the deferred has been resolved
-				if (this.status === 'rj')
-					arguments[i].apply(this, this.resultArgs);
 
-				this.failFuncs.push(arguments[i]);
-			}
+			return this;
+		},
+
+		always: function() {
+			if (arguments.length > 0 && arguments[0])
+				this.done(arguments[0]).fail(arguments[0]);
+
+			return this;
+		},
+
+		then: function() {
+			// fail function(s)
+			if (arguments.length > 1 && arguments[1])
+				this.fail(arguments[1]);
+
+			// done function(s)
+			if (arguments.length > 0 && arguments[0])
+				this.done(arguments[0]);
+
+			return this;
+		},
+
+		state: function() {
+			return this.status;
 		}
-
-		return this;
-	}
-
-	D.prototype.always = function() {
-		if (arguments.length > 0 && arguments[0])
-			this.done(arguments[0]).fail(arguments[0]);
-
-		return this;
-	}
-
-	D.prototype.then = function() {
-		// fail function(s)
-		if (arguments.length > 1 && arguments[1])
-			this.fail(arguments[1]);
-
-		// done function(s)
-		if (arguments.length > 0 && arguments[0])
-			this.done(arguments[0]);
-
-		return this;
-	}
+	};
 
 	global.Deferred = D;
 })(window);
