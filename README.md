@@ -1,35 +1,34 @@
 Standalone-Deferred
 ===================
 
-deferred.js is a standalone implementation of deferreds aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
+deferred.js is a standalone implementation of Deferred Object aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
 
 
 What's implemented ?
 --------------------
 
-* Deferred()/new Deferred()
-* Deferred.when
 * Deferred.always
-* Deferred.then
-* Deferred.promise
-* Deferred.isResolved
-* Deferred.isRejected
-* Deferred.resolve
-* Deferred.resolveWith
-* Deferred.reject
-* Deferred.rejectWith
 * Deferred.done
 * Deferred.fail
+* Deferred.isRejected
+* Deferred.isResolved
+* Deferred.notify
+* Deferred.notifyWith
+* Deferred.progress
+* Deferred.promise
+* Deferred.reject
+* Deferred.rejectWith
+* Deferred.resolve
+* Deferred.resolveWith
 * Deferred.state
+* Deferred.then
+* Deferred.when
 
 
 What's Missing ?
 ----------------
 
-* Deferred.notify
-* Deferred.notifyWith
 * Deferred.pipe
-* Deferred.progress
 
 
 Usage
@@ -62,7 +61,7 @@ Licence
 
 This software is distributed under an MIT licence.
 
-Copyright 2011 © Nicolas Ramz
+Copyright 2012 © Nicolas Ramz
 
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 > and associated documentation files (the "Software"), to deal in the Software without
