@@ -16,6 +16,7 @@
 
 		this.doneFuncs = [];
 		this.failFuncs = [];
+		this.progressFuncs = [];
 		this.resultArgs = null;
 		this.status = 'pending';
 
@@ -91,6 +92,7 @@
 				obj.done = bind(this.done, this, obj);
 				obj.fail = bind(this.fail, this, obj);
 				obj.state = bind(this.state, this, obj);
+				obj.progress = bind(this.progress, this, obj);
 				obj.always = bind(this.always, this, obj);
 				obj.isResolved = bind(this.isResolved, this, obj);
 				obj.isRejected = bind(this.isRejected, this, obj);
@@ -107,6 +109,10 @@
 
 		resolve: function() {
 			return this.resolveWith(this, arguments);
+		},
+
+		notify: function() {
+			return this.notifyWith(this, arguments);
 		},
 
 		exec: function(context, dst, args, st) {
@@ -131,6 +137,13 @@
 			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
 			return this.exec(context, this.failFuncs, args, 'rejected');
+		},
+
+		notifyWith: function(context) {
+			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
+
+			// notify doesn't change the Deferred state so we pass pending as "new" state
+			return this.exec(context, this.progressFuncs, args, 'pending');
 		},
 
 		done: function() {
@@ -170,7 +183,7 @@
 				if (arguments[i].constructor === Array ) {
 					var arr = arguments[i];
 					for (var j = 0; j < arr.length; j++) {
-						// immediately call the function if the deferred has been resolved
+						// immediately call the function if the deferred has been rejected
 						if (this.status === 'rejected')
 							arr[j].apply(this, this.resultArgs);
 
@@ -178,12 +191,34 @@
 					}
 				}
 				else {
-					// immediately call the function if the deferred has been resolved
+					// immediately call the function if the deferred has been rejected
 					if (this.status === 'rejected')
 						arguments[i].apply(this, this.resultArgs);
 
 					this.failFuncs.push(arguments[i]);
 				}
+			}
+
+			return this;
+		},
+
+		progress: function(func) {
+			// return immediatlely if status has been resolved/rejected
+			if (this.status !== 'pending')
+				return;
+
+			for (var i = 0; i < arguments.length; i++) {
+				// skip any undefined or null arguments
+				if (!arguments[i])
+					continue;
+
+				if (arguments[i].constructor === Array ) {
+					var arr = arguments[i];
+					for (var j = 0; j < arr.length; j++)
+						this.progressFuncs.push(arr[j]);
+				}
+				else
+					this.progressFuncs.push(arguments[i]);
 			}
 
 			return this;
@@ -197,6 +232,10 @@
 		},
 
 		then: function() {
+			// progress function(s)
+			if (arguments.length > 2 && arguments[2])
+				this.progress(arguments[2]);
+
 			// fail function(s)
 			if (arguments.length > 1 && arguments[1])
 				this.fail(arguments[1]);
