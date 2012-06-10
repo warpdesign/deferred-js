@@ -1,7 +1,7 @@
 Standalone-Deferred
 ===================
 
-deferred.js is a standalone implementation of Deferred Object aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
+deferred.js is a light (less than 1 kb gzipped) standalone implementation of Deferred Object aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
 
 
 What's implemented ?
