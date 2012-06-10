@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Standalone-deferred by warpdesign</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/warpdesign/Standalone-Deferred">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/warpdesign/Standalone-Deferred/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/warpdesign/Standalone-Deferred/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Standalone-deferred</h1>
+          <p>jQuery-compatible standalone Deferred</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/warpdesign">warpdesign</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Standalone-Deferred</h1>
+
+<p>deferred.js is a light (less than 1 kb gzipped) standalone implementation of Deferred Object aims to be fully compatible with $.Deferred found in <a href="http://api.jquery.com/category/deferred-object/">jQuery 1.5+</a>.</p>
+
+<h2>What's implemented ?</h2>
+
+<ul>
+<li>Deferred.always</li>
+<li>Deferred.done</li>
+<li>Deferred.fail</li>
+<li>Deferred.isRejected</li>
+<li>Deferred.isResolved</li>
+<li>Deferred.notify</li>
+<li>Deferred.notifyWith</li>
+<li>Deferred.progress</li>
+<li>Deferred.promise</li>
+<li>Deferred.reject</li>
+<li>Deferred.rejectWith</li>
+<li>Deferred.resolve</li>
+<li>Deferred.resolveWith</li>
+<li>Deferred.state</li>
+<li>Deferred.then</li>
+<li>Deferred.when</li>
+</ul><h2>What's Missing ?</h2>
+
+<ul>
+<li>Deferred.pipe</li>
+</ul><h2>Usage</h2>
+
+<pre><code>// Create a Deferred and return its Promise
+function asyncEvent(){
+    var dfd = new Deferred();
+    setTimeout(function(){
+        dfd.resolve("hurray");
+    }, Math.floor(Math.random()*1500));
+    setTimeout(function(){
+        dfd.reject("sorry");
+    }, Math.floor(Math.random()*1500));
+    return dfd.promise();
+}
+
+// Attach a done and fail handler for the asyncEvent
+Deferred.when(asyncEvent()).then(
+    function(status){
+        console.log( status+', things are going well' );
+    },
+    function(status){
+        console.log( status+', you fail this time' );
+    }
+);
+</code></pre>
+
+<h2>Licence</h2>
+
+<p>This software is distributed under an MIT licence.</p>
+
+<p>Copyright 2012 © Nicolas Ramz</p>
+
+<blockquote>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+and associated documentation files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
+The Software is provided "as is", without warranty of any kind, express or implied, including
+but not limited to the warranties of merchantability, fitness for a particular purpose and
+noninfringement. In no event shall the authors or copyright holders be liable for any claim,
+damages or other liability, whether in an action of contract, tort or otherwise, arising from,
+out of or in connection with the software or the use or other dealings in the Software.</p>
+</blockquote>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA–32512136–1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
