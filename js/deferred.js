@@ -123,6 +123,13 @@
 
 			this.status = st;
 
+			if (this.status === 'pending')
+				args = this.progressFilter(args);
+			else if (this.status === 'rejected')
+				args = this.failFilter(args);
+			else
+				args = this.doneFilter(args);
+
 			for (var i = 0; i < dst.length; i++)
 				dst[i].apply(context, args);
 
@@ -130,19 +137,19 @@
 		},
 
 		resolveWith: function(context) {
-			var args = this.resultArgs = (arguments.length > 1) ? this.doneFilter(arguments[1]) : [];
+			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
 			return this.exec(context, this.doneFuncs, args, 'resolved');
 		},
 
 		rejectWith: function(context) {
-			var args = this.resultArgs = (arguments.length > 1) ? this.failFilter(arguments[1]) : [];
+			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
 			return this.exec(context, this.failFuncs, args, 'rejected');
 		},
 
 		notifyWith: function(context) {
-			var args = this.resultArgs = (arguments.length > 1) ? this.progressFilter(arguments[1]) : [];
+			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
 
 			// notify doesn't change the Deferred state so we pass pending as "new" state
 			return this.exec(context, this.progressFuncs, args, 'pending');
