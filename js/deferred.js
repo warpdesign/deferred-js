@@ -91,7 +91,7 @@
 			else
 				var obj = {};
 
-			if (obj.isResolved === undefined && obj.isRejected === undefined) {		
+			if (obj.isResolved === undefined && obj.isRejected === undefined) {
 				obj.promise = bind(this.promise, this);
 				obj.then = bind(this.then, this, obj);
 				obj.done = bind(this.done, this, obj);
@@ -170,7 +170,6 @@
 					for (var j = 0; j < arr.length; j++) {
 						// immediately call the function if the deferred has been resolved
 						if (this.status === 'resolved')
-							// arr[j].apply(this, this.resultArgs);
 							this.exec(this, [arr[j]], this.resultArgs, this.status);
 
 						this.doneFuncs.push(arr[j]);
@@ -180,7 +179,6 @@
 					// immediately call the function if the deferred has been resolved
 					if (this.status === 'resolved')
 						this.exec(this, [arguments[i]], this.resultArgs, this.status); 
-						//arguments[i].apply(this, this.resultArgs);
 
 					this.doneFuncs.push(arguments[i]);
 				}
@@ -200,7 +198,6 @@
 					for (var j = 0; j < arr.length; j++) {
 						// immediately call the function if the deferred has been rejected
 						if (this.status === 'rejected')
-							// arr[j].apply(this, this.resultArgs);
 							this.exec(this, [arr[j]], this.resultArgs, this.status);
 
 						this.failFuncs.push(arr[j]);
@@ -209,7 +206,6 @@
 				else {
 					// immediately call the function if the deferred has been rejected
 					if (this.status === 'rejected')
-						// arguments[i].apply(this, this.resultArgs);
 						this.exec(this, [arguments[i]], this.resultArgs, this.status);
 
 					this.failFuncs.push(arguments[i]);
