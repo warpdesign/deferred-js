@@ -19,6 +19,7 @@
 		this.progressFuncs = [];
 		this.resultArgs = null;
 		this.status = 'pending';
+		this.doneFilter = this.failFilter = this.progressFilter = (function() { return function(arg) { return arg; }; })();
 
 		// check for option function: call it with this as context and as first parameter, as specified in jQuery api
 		if (func)
@@ -44,7 +45,7 @@
 
 				for (var i = 0; i < args.length; i++) {
 					(function(j) {
-						args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); /* console.log(rp); */ }})
+						args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); }})
 						.fail(function() { df.reject(arguments); });
 					})(i);
 				}
@@ -91,6 +92,7 @@
 				obj.then = bind(this.then, this, obj);
 				obj.done = bind(this.done, this, obj);
 				obj.fail = bind(this.fail, this, obj);
+				obj.pipe = bind(this.pipe, this, obj);
 				obj.state = bind(this.state, this, obj);
 				obj.progress = bind(this.progress, this, obj);
 				obj.always = bind(this.always, this, obj);
@@ -128,19 +130,19 @@
 		},
 
 		resolveWith: function(context) {
-			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
+			var args = this.resultArgs = (arguments.length > 1) ? this.doneFilter(arguments[1]) : [];
 
 			return this.exec(context, this.doneFuncs, args, 'resolved');
 		},
 
 		rejectWith: function(context) {
-			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
+			var args = this.resultArgs = (arguments.length > 1) ? this.failFilter(arguments[1]) : [];
 
 			return this.exec(context, this.failFuncs, args, 'rejected');
 		},
 
 		notifyWith: function(context) {
-			var args = this.resultArgs = (arguments.length > 1) ? arguments[1] : [];
+			var args = this.resultArgs = (arguments.length > 1) ? this.progressFilter(arguments[1]) : [];
 
 			// notify doesn't change the Deferred state so we pass pending as "new" state
 			return this.exec(context, this.progressFuncs, args, 'pending');
@@ -157,7 +159,8 @@
 					for (var j = 0; j < arr.length; j++) {
 						// immediately call the function if the deferred has been resolved
 						if (this.status === 'resolved')
-							arr[j].apply(this, this.resultArgs);
+							// arr[j].apply(this, this.resultArgs);
+							this.exec(this, [arr[j]], this.resultArgs, this.status);
 
 						this.doneFuncs.push(arr[j]);
 					}
@@ -165,7 +168,8 @@
 				else {
 					// immediately call the function if the deferred has been resolved
 					if (this.status === 'resolved')
-						arguments[i].apply(this, this.resultArgs);
+						this.exec(this, [arguments[i]], this.resultArgs, this.status); 
+						//arguments[i].apply(this, this.resultArgs);
 
 					this.doneFuncs.push(arguments[i]);
 				}
@@ -185,7 +189,8 @@
 					for (var j = 0; j < arr.length; j++) {
 						// immediately call the function if the deferred has been rejected
 						if (this.status === 'rejected')
-							arr[j].apply(this, this.resultArgs);
+							// arr[j].apply(this, this.resultArgs);
+							this.exec(this, [arr[j]], this.resultArgs, this.status);
 
 						this.failFuncs.push(arr[j]);
 					}
@@ -193,7 +198,8 @@
 				else {
 					// immediately call the function if the deferred has been rejected
 					if (this.status === 'rejected')
-						arguments[i].apply(this, this.resultArgs);
+						// arguments[i].apply(this, this.resultArgs);
+						this.exec(this, [arguments[i]], this.resultArgs, this.status);
 
 					this.failFuncs.push(arguments[i]);
 				}
@@ -249,6 +255,16 @@
 
 		state: function() {
 			return this.status;
+		},
+
+		pipe: function(done, fail, progress) {
+			var promise = this.promise();
+			
+			promise.doneFilter = typeof done === 'function' ? done : null;
+			promise.failFilter = typeof fail === 'function' ? done : null;
+			promise.progressFilter = typeof progress === 'function' ? done : null;
+
+			return promise;
 		}
 	};
 
