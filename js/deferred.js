@@ -10,6 +10,10 @@
 		};
 	}
 
+	function isArray(arr) {
+		return Object.prototype.toString.call(arr) === '[object Array]';
+	}
+
 	function D(func) {
 		if (!(this instanceof D))
 			return new D();
@@ -161,7 +165,7 @@
 				if (!arguments[i])
 					continue;
 
-				if (arguments[i].constructor === Array ) {
+				if (isArray(arguments[i])) {
 					var arr = arguments[i];
 					for (var j = 0; j < arr.length; j++) {
 						// immediately call the function if the deferred has been resolved
@@ -191,7 +195,7 @@
 				if (!arguments[i])
 					continue;
 
-				if (arguments[i].constructor === Array ) {
+				if (isArray(arguments[i])) {
 					var arr = arguments[i];
 					for (var j = 0; j < arr.length; j++) {
 						// immediately call the function if the deferred has been rejected
@@ -225,7 +229,7 @@
 				if (!arguments[i])
 					continue;
 
-				if (arguments[i].constructor === Array ) {
+				if (isArray(arguments[i])) {
 					var arr = arguments[i];
 					for (var j = 0; j < arr.length; j++)
 						this.progressFuncs.push(arr[j]);
@@ -238,10 +242,8 @@
 		},
 
 		always: function() {
-			if (arguments.length > 0 && arguments[0])
-				this.done(arguments[0]).fail(arguments[0]);
-
-			return this;
+			var arr = Array.prototype.slice.call(arguments);
+			return this.done.apply(this, arr).fail.apply(this, arr);
 		},
 
 		then: function() {
