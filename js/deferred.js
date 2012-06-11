@@ -122,7 +122,7 @@
 		},
 
 		exec: function(context, dst, args, st) {
-			if (this.status !== 'pending')
+			if (this.status !== 'pending' && st !== this.status)
 				return this;
 
 			this.status = st;
@@ -270,8 +270,8 @@
 			var promise = this.promise();
 			
 			promise.doneFilter = typeof done === 'function' ? done : null;
-			promise.failFilter = typeof fail === 'function' ? done : null;
-			promise.progressFilter = typeof progress === 'function' ? done : null;
+			promise.failFilter = typeof fail === 'function' ? fail : null;
+			promise.progressFilter = typeof progress === 'function' ? progress : null;
 
 			return promise;
 		}
