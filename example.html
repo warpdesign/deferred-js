@@ -18,7 +18,10 @@
 		// Original example from jQuery API documentation: http://api.jquery.com/deferred.promise/
 		// Create a Deferred and return its Promise
 		function asyncEvent(){
-			dfd = new Deferred();
+			dfd = new Deferred().always(function(res) {
+				console.log("I'm always executed, this time it's a", res); 
+			});
+
 			setTimeout(function(){
 				dfd.resolve("hurray");
 			}, Math.floor(Math.random()*1500));

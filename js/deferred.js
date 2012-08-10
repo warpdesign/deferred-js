@@ -81,6 +81,10 @@
 				return this;
 			},
 
+			always: function() {
+				return this.done.apply(this, arguments).fail.apply(this, arguments);
+			},
+
 			progress: function() {
 				for (var i = 0; i < arguments.length; i++) {
 					// skip any undefined or null arguments
