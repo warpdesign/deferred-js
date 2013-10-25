@@ -273,8 +273,18 @@
 
 				for (var i = 0; i < args.length; i++) {
 					(function(j) {
-						args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); }})
-						.fail(function() { df.reject(arguments); });
+                        var obj = null;
+                        
+                        if (args[j].done) {
+                            args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); }})
+                            .fail(function() { df.reject(arguments); });
+                        } else {
+                            obj = args[j];
+                            args[j] = new Deferred();
+                            
+                            args[j].done(function() { rp[j] = (arguments.length < 2) ? arguments[0] : arguments; if (++done == size) { df.resolve.apply(df, rp); }})
+                            .fail(function() { df.reject(arguments); }).resolve(obj);
+                        }
 					})(i);
 				}
 
