@@ -1,7 +1,7 @@
 deferred-js
 ===========
 
-deferred-js is a light (less than 1 kb gzipped) standalone implementation of promise aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
+deferred-js is a light (less than 1 kb gzipped) standalone implementation of promise/deferred that aims to be fully compatible with $.Deferred found in [jQuery 1.5+] (http://api.jquery.com/category/deferred-object/).
 
 
 What's implemented ?
