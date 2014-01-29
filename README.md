@@ -31,8 +31,19 @@ What's Missing ?
 * Deferred.pipe
 
 
-Usage
+Setup
 -----
+
+#### Using nodejs
+ * type in a terminal: npm install deferred-js
+ * require deferred-js: var Deferred = require('deferred-js');
+
+#### Using a browser
+ * include the deferred script: <script type="text/javascript" src="deferred.js"></script>
+ * Deferred is available inside the global object
+
+Example
+-------
 
 	// Create a Deferred and return its Promise
 	function asyncEvent(){
