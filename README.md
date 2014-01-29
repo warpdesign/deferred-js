@@ -35,11 +35,11 @@ Setup
 -----
 
 #### Using nodejs
- * type in a terminal: npm install deferred-js
- * require deferred-js: var Deferred = require('deferred-js');
+ * type in a terminal: `npm install deferred-js`
+ * require deferred-js: `var Deferred = require('deferred-js');`
 
 #### Using a browser
- * include the deferred script: <script type="text/javascript" src="deferred.js"></script>
+ * include the deferred script: `<script type="text/javascript" src="deferred.js"></script>`
  * Deferred is available inside the global object
 
 Example
