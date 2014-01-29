@@ -1,0 +1,23 @@
+{
+  "name": "deferred-js",
+  "version": "1.0.1",
+  "description": "Light (less than 1 kb gzipped) standalone implementation of promise/deferred that aims to be fully compatible with $.Deferred found in jQuery 1.5+.",
+  "main": "node_module/jq-deferred.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/warpdesign/Standalone-Deferred.git"
+  },
+  "keywords": [
+    "deferred",
+    "promise",
+    "jquery"
+  ],
+  "author": "Nicolas Ramz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/warpdesign/Standalone-Deferred/issues"
+  }
+}
