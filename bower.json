@@ -12,8 +12,8 @@
         "package.json",
         "README.md"
     ],
-    homepage: "https://github.com/warpdesign/deferred-js",
+    "homepage": "https://github.com/warpdesign/deferred-js",
     "authors": [
-      "Nicolas Ramz <nicolas.ramz@gmail.com> (http://nicolasramz.fr)"
+      "Nicolas Ramz <nicolas.ramz@gmail.com> (http://johndoe.com)"
     ]
 }
