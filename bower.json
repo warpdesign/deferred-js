@@ -1,6 +1,6 @@
 {
     "name": "YourAwesomePackageName",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "main": "js/deferred.min.js",
     "ignore": [
         "node_module",
