@@ -1,6 +1,6 @@
 {
-    "name": "YourAwesomePackageName",
-    "version": "1.0.3",
+    "name": "deferred-js",
+    "version": "1.0.4",
     "main": "js/deferred.min.js",
     "ignore": [
         "node_module",
@@ -14,6 +14,6 @@
     ],
     "homepage": "https://github.com/warpdesign/deferred-js",
     "authors": [
-      "Nicolas Ramz <nicolas.ramz@gmail.com> (http://johndoe.com)"
+      "Nicolas Ramz <nicolas.ramz@gmail.com> (http://nicolasramz.fr)"
     ]
 }
