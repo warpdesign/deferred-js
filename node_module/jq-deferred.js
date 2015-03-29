@@ -357,7 +357,6 @@ module.exports = (function(window) {
                             .fail(function() { df.reject.apply(whenContext, arguments); }).resolve(obj);
                         }
                         
-                        console.log('execing progress');
                         args[j].progress(function() {
                             pp[j] = (arguments.length < 2) ? arguments[0] : arguments;
                             df.notify.apply(whenContext, pp);
